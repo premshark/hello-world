@@ -1,18 +1,15 @@
 {
-    "family": "hello-world",
     "containerDefinitions": [
         {
-            "image": "%REPOSITORY_URI%:v_%BUILD_NUMBER%",
-            "name": "hello-world",
-            "cpu": 10,
-            "memory": 256,
+            "name": "test",
+            "image": "466749146115.dkr.ecr.ap-south-1.amazonaws.com/test1:latest",
             "essential": true,
-            "portMappings": [
-                {
-                    "containerPort": 80,
-                    "hostPort": 80
-                }
-            ]
+            "cpu":1024,
+            "memory":500
         }
-    ]
+    ],
+    
+    "networkMode":"host",
+    "family": "test",
+    "taskRoleArn": "arn:aws:iam::466749146115:role/ECS_ROLE"
 }
