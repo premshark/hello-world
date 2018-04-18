@@ -1,13 +1,21 @@
-FROM alpine:3.4
+FROM ubuntu:14.04
+RUN apt-get update && apt-get -y upgrade
 
-RUN apk --update add nginx php5-fpm && \
-    mkdir -p /var/log/nginx && \
-    touch /var/log/nginx/access.log && \
-    mkdir -p /run/nginx
+RUN apt-get -y install software-properties-common
+RUN add-apt-repository ppa:webupd8team/java
+RUN apt-get -y update
 
-ADD www /www
-ADD nginx.conf /etc/nginx/
-ADD php-fpm.conf /etc/php5/php-fpm.conf
+# Accept the license
+RUN echo "oracle-java7-installer shared/accepted-oracle-license-v1-1 boolean true" | debconf-set-selections
 
-EXPOSE 80
-CMD php-fpm -d variables_order="EGPCS" && (tail -F /var/log/nginx/access.log &) && exec nginx -g "daemon off;"
+RUN apt-get -y install oracle-java7-installer
+
+# Here comes the tomcat installation
+RUN apt-get -y install tomcat7
+RUN echo "JAVA_HOME=/usr/lib/jvm/java-7-oracle" >> /etc/default/tomcat7
+
+# Expose the default tomcat port
+EXPOSE 8080
+
+# Start the tomcat (and leave it hanging)
+CMD service tomcat7 start && tail -f /var/lib/tomcat7/logs/catalina.out
